@@ -1,4 +1,4 @@
-# samtaubman.github.io
+# riyathomas.github.io
 
 ## Project setup
 ```
