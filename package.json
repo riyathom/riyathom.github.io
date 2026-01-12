@@ -12,6 +12,7 @@
     "@quasar/extras": "^1.0.0",
     "core-js": "^3.8.3",
     "quasar": "^2.16.0",
+    "three": "^0.182.0",
     "vue": "^3.2.13"
   },
   "devDependencies": {
