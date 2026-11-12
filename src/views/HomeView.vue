@@ -40,7 +40,7 @@
             href="https://www.linkedin.com/in/riya-thomas-bb3163168/"
             target="_blank"
           >
-            <img :src="require('@/assets/imgs/linkedin.svg')" alt="LinkedIn" style="width: 55px; height: 55px;" />
+            <img :src="require('@/assets/imgs/linkedin.svg')" alt="LinkedIn" style="width: 56px; height: 56px;" />
           </q-btn>
           <q-btn
             flat
@@ -49,7 +49,7 @@
             href="https://scholar.google.com/citations?user=4Ii8mJwAAAAJ&hl=en"
             target="_blank"
           >
-            <img :src="require('@/assets/imgs/google-scholar.svg')" alt="Google Scholar" style="width: 55px; height: 55px;" />
+            <img :src="require('@/assets/imgs/google-scholar.svg')" alt="Google Scholar" style="width: 54px; height: 54px; transform: translateX(-3px);" />
           </q-btn>
           <q-btn
             flat
@@ -59,7 +59,7 @@
           >
             <div class="icon-flip-container" :class="{ flipped: isDarkMode }">
               <div class="icon-face icon-front">
-                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="4"/>
                   <line x1="12" y1="2" x2="12" y2="5"/>
                   <line x1="12" y1="19" x2="12" y2="22"/>
@@ -72,7 +72,7 @@
                 </svg>
               </div>
               <div class="icon-face icon-back">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
                 </svg>
               </div>
@@ -591,8 +591,8 @@ export default {
 }
 
 .icon-flip-container {
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   position: relative;
   transform-style: preserve-3d;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
