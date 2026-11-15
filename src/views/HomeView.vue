@@ -125,8 +125,23 @@ export default {
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.onWindowResize);
+    this.isUnmounted = true;
+    cancelAnimationFrame(this.animationId);
+    if (this.scene) {
+      this.scene.traverse((obj) => {
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) {
+          const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+          materials.forEach((m) => m.dispose());
+        }
+        if (obj.isInstancedMesh) obj.dispose();
+      });
+      this.scene.clear();
+    }
     if (this.renderer) {
       this.renderer.dispose();
+      this.renderer.forceContextLoss();
+      this.renderer.domElement.remove();
     }
   },
   methods: {
@@ -171,6 +186,7 @@ export default {
       loader.load(
         '/models/brain.glb',
         (gltf) => {
+          if (this.isUnmounted) return;
           this.brainMesh = gltf.scene;
           
           this.brainMesh.traverse((child) => {
@@ -208,6 +224,7 @@ export default {
                 opacity: 0.0
               });
               child.material = wireframeMaterial;
+              child.visible = false;
             }
           });
           
@@ -219,11 +236,10 @@ export default {
           
           this.scene.add(this.brain);
         },
-        (progress) => {
-          console.log('Loading brain model:', (progress.loaded / progress.total * 100) + '%');
-        },
+        undefined,
         (error) => {
           console.error('Error loading brain model:', error);
+          if (this.isUnmounted) return;
           this.createProceduralBrain();
         }
       );
@@ -253,25 +269,44 @@ export default {
           this.brain.worldToLocal(tempPosition);
 
           nodes.push(tempPosition.clone());
-
-          const nodeGeometry = new THREE.SphereGeometry(0.004, 8, 8);
-          const nodeMaterial = new THREE.MeshPhongMaterial({
-            color: 0x000000,
-            emissive: 0x111111
-          });
-
-          const nodeMesh = new THREE.Mesh(nodeGeometry, nodeMaterial);
-          nodeMesh.position.copy(tempPosition);
-          this.brain.add(nodeMesh);
         }
       });
 
+      this.brain.add(this.createNodeInstances(nodes, 0.004, 0x111111));
       this.connectNodes(nodes);
+    },
+
+    // One InstancedMesh (1 draw call) instead of one Mesh per node
+    createNodeInstances(positions, radius, emissive) {
+      const geometry = new THREE.SphereGeometry(radius, 8, 8);
+      const material = new THREE.MeshPhongMaterial({ color: 0x000000, emissive });
+      const instances = new THREE.InstancedMesh(geometry, material, positions.length);
+
+      const matrix = new THREE.Matrix4();
+      positions.forEach((p, i) => {
+        matrix.makeTranslation(p.x, p.y, p.z);
+        instances.setMatrixAt(i, matrix);
+      });
+      instances.instanceMatrix.needsUpdate = true;
+
+      return instances;
+    },
+
+    createLineSegments(coords) {
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(coords, 3));
+      const material = new THREE.LineBasicMaterial({
+        color: 0x000000,
+        transparent: true,
+        opacity: 0.25
+      });
+      return new THREE.LineSegments(geometry, material);
     },
 
     connectNodes(nodes) {
       const maxDistance = 0.2;
       const maxConnections = 3;
+      const coords = [];
 
       for (let i = 0; i < nodes.length; i++) {
         let connections = 0;
@@ -282,23 +317,16 @@ export default {
           const distance = nodes[i].distanceTo(nodes[j]);
 
           if (distance < maxDistance && Math.abs(nodes[i].z - nodes[j].z) < 0.15) {
-            const geometry = new THREE.BufferGeometry().setFromPoints([
-              nodes[i],
-              nodes[j]
-            ]);
-
-            const material = new THREE.LineBasicMaterial({
-              color: 0x000000,
-              transparent: true,
-              opacity: 0.25
-            });
-
-            const line = new THREE.Line(geometry, material);
-            this.brain.add(line);
+            coords.push(
+              nodes[i].x, nodes[i].y, nodes[i].z,
+              nodes[j].x, nodes[j].y, nodes[j].z
+            );
             connections++;
           }
         }
       }
+
+      this.brain.add(this.createLineSegments(coords));
     },
 
     createProceduralBrain() {
@@ -321,35 +349,25 @@ export default {
         const z = radiusZ * Math.cos(phi);
         
         nodes.push(new THREE.Vector3(x, y, z));
-        
-        const nodeGeometry = new THREE.SphereGeometry(0.02, 8, 8);
-        const nodeMaterial = new THREE.MeshPhongMaterial({ 
-          color: 0x000000,
-          emissive: 0x000000
-        });
-        const nodeMesh = new THREE.Mesh(nodeGeometry, nodeMaterial);
-        nodeMesh.position.copy(nodes[i]);
-        this.brain.add(nodeMesh);
       }
-      
+
+      this.brain.add(this.createNodeInstances(nodes, 0.02, 0x000000));
+
+      const coords = [];
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const distance = nodes[i].distanceTo(nodes[j]);
-          
+
           if (distance < 0.8) {
-            const points = [nodes[i], nodes[j]];
-            const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-            const lineMaterial = new THREE.LineBasicMaterial({ 
-              color: 0x000000,
-              opacity: 0.25,
-              transparent: true
-            });
-            const line = new THREE.Line(lineGeometry, lineMaterial);
-            this.brain.add(line);
+            coords.push(
+              nodes[i].x, nodes[i].y, nodes[i].z,
+              nodes[j].x, nodes[j].y, nodes[j].z
+            );
           }
         }
       }
-      
+      this.brain.add(this.createLineSegments(coords));
+
       this.scene.add(this.brain);
     },
     
@@ -410,7 +428,7 @@ export default {
     },
     
     animate() {
-      requestAnimationFrame(this.animate);
+      this.animationId = requestAnimationFrame(this.animate);
       
       if (!this.isDragging && this.brain) {
         this.brain.rotation.y += 0.002;
