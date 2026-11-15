@@ -1,14 +1,7 @@
 <template>
   <div class="pub-page" :class="{ 'dark-mode': isDarkMode }">
 
-    <!-- Back nav -->
-    <router-link to="/" class="back-link">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="19" y1="12" x2="5" y2="12"/>
-        <polyline points="12 19 5 12 12 5"/>
-      </svg>
-      <span>RIYA THOMAS</span>
-    </router-link>
+    <nav-links />
 
     <!-- Page header -->
     <header class="pub-header">
@@ -74,8 +67,11 @@
 </template>
 
 <script>
+import NavLinks from '@/components/NavLinks.vue';
+
 export default {
   name: 'PublicationsView',
+  components: { NavLinks },
   props: {
     isDarkMode: {
       type: Boolean,
@@ -178,8 +174,6 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Josefin+Sans:wght@200;300;400&display=swap');
-
 /* ── Base ── */
 .pub-page {
   --bg: #ffffff;
@@ -199,6 +193,13 @@ export default {
   padding-bottom: 6rem;
 }
 
+/* Leave room for the fixed side nav */
+@media (min-width: 1000px) {
+  .pub-page {
+    padding-left: 17rem;
+  }
+}
+
 .pub-page.dark-mode {
   --bg: #0f0f0f;
   --fg: #e8e8e8;
@@ -208,32 +209,6 @@ export default {
   --accent: #e8e8e8;
   --entry-border: rgba(255,255,255,0.1);
   --link-hover: rgba(255,255,255,0.06);
-}
-
-/* ── Back link ── */
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  position: fixed;
-  top: 2rem;
-  left: 2.5rem;
-  z-index: 100;
-  text-decoration: none;
-  color: var(--fg);
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 300;
-  letter-spacing: 0.18em;
-  opacity: 0.6;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-.back-link:hover {
-  opacity: 1;
-  transform: translateX(-3px);
-}
-.back-link svg {
-  stroke: var(--fg);
 }
 
 /* ── Header ── */
@@ -452,9 +427,6 @@ export default {
   }
   .filter-bar {
     padding: 1.5rem 1.5rem 0;
-  }
-  .back-link {
-    left: 1.5rem;
   }
 }
 </style>

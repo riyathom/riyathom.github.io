@@ -8,20 +8,7 @@
 
         <div id="brain-canvas" class="brain-canvas-container"></div>
         
-        <div class="nav-links">
-          <q-btn
-            v-for="item in navItems"
-            :key="item.label"
-            flat
-            no-caps
-            rounded
-            class="nav-btn"
-            :to="item.to"
-            router
-          >
-            {{ item.label }}
-          </q-btn>
-        </div>
+        <nav-links />
 
         <div class="social-links">
           <q-btn
@@ -88,9 +75,11 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler.js';
+import NavLinks from '@/components/NavLinks.vue';
 
 export default {
   name: 'HomeView',
+  components: { NavLinks },
   props: {
     isDarkMode: {
       type: Boolean,
@@ -99,13 +88,6 @@ export default {
   },
   data () {
     return {
-      navItems: [
-        { label: 'ABOUT', to: '/about' },
-        { label: 'PUBLICATIONS', to: '/publications' },
-        { label: 'PRESENTATIONS', to: '/presentations' },
-        { label: 'CV', to: '/cv' },
-        { label: 'RESOURCES', to: '/resources' }
-      ],
       isDragging: false,
       previousMousePosition: { x: 0, y: 0 },
     };
@@ -493,7 +475,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 2.5rem;
+  padding-top: 4rem;
   position: relative;
 }
 
@@ -505,64 +487,6 @@ export default {
   color: #000;
   margin: 0 0 1.8rem 0;
   font-weight: 300;
-}
-
-.nav-links {
-  position: absolute;
-  left: 5%;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 2.6rem;
-}
-
-.nav-btn {
-  font-family: Avenir, "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 1rem !important;
-  letter-spacing: 0.12em;
-  color: #000;
-  opacity: 0.85;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  border: none;
-  border-radius: 30px;
-  padding: 0.9rem 2.5rem !important;
-  min-width: 220px !important;
-  min-height: 50px !important;
-  justify-content: flex-start;
-  position: relative;
-  background: white;
-}
-
-.nav-btn .q-btn__content {
-  font-size: 1.1rem !important;
-}
-
-.nav-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 30px;
-  padding: 1.5px;
-  background: linear-gradient(135deg, 
-    rgba(0, 0, 0, 0.3) 0%, 
-    rgba(0, 0, 0, 0.5) 25%,
-    rgba(0, 0, 0, 0.65) 50%,
-    rgba(0, 0, 0, 0.8) 75%,
-    rgba(0, 0, 0, 0.95) 100%
-  );
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-.nav-btn:hover {
-  opacity: 1;
-  transform: translateX(5px);
-  background-color: rgba(0, 0, 0, 0.03);
 }
 
 .social-links {
@@ -643,21 +567,8 @@ body.dark-mode .container {
 }
 
 body.dark-mode .banner-text,
-body.dark-mode .nav-btn,
 body.dark-mode .social-btn {
   color: #e8e8e8 !important;
-}
-
-body.dark-mode .nav-btn {
-  background: #1a1a1a !important;
-}
-
-body.dark-mode .nav-btn::before {
-  background: linear-gradient(135deg,
-    rgba(255,255,255,0.1) 0%,
-    rgba(255,255,255,0.3) 50%,
-    rgba(255,255,255,0.5) 100%
-  );
 }
 
 body.dark-mode .social-btn {
