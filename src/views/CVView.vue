@@ -36,7 +36,7 @@ export default {
   },
   data() {
     return {
-      pdfUrl: process.env.BASE_URL + 'cv.pdf'
+      pdfUrl: process.env.BASE_URL + 'R_Thomas - CV.pdf'
     };
   }
 };

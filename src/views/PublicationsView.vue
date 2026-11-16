@@ -11,7 +11,7 @@
     </header>
 
     <!-- Filter bar -->
-    <div class="filter-bar">
+    <!-- <div class="filter-bar">
       <button
         v-for="tag in allTags"
         :key="tag"
@@ -21,7 +21,7 @@
       >
         {{ tag }}
       </button>
-    </div>
+    </div> -->
 
     <!-- Publications list -->
     <main class="pub-list">
@@ -44,7 +44,7 @@
 
             <p class="pub-authors">{{ pub.authors }}</p>
 
-            <p class="pub-venue">
+            <p v-if="pub.venue" class="pub-venue">
               <em>{{ pub.venue }}</em>
               <span v-if="pub.volume"> · Vol. {{ pub.volume }}</span>
               <span v-if="pub.pages"> · pp. {{ pub.pages }}</span>
@@ -84,75 +84,45 @@ export default {
       publications: [
         {
           id: 1,
-          year: 2024,                          // * Year of publication
-          type: 'JOURNAL',                     // * JOURNAL | CONFERENCE | PREPRINT | BOOK CHAPTER
-          title: 'Publication Title Goes Here. Replace with the full title of your paper.',  // *
-          authors: 'Thomas, R., Co-Author, A., & Co-Author, B.',  // *
-          venue: 'Journal of Neuroscience',    // * Journal / conference name
-          volume: '44',                        // Volume number (optional)
-          pages: '1234–1250',                  // Page range (optional)
-          abstract: 'A brief abstract or summary of the paper can go here. This is optional — remove the field if you prefer a cleaner look without abstracts.',
-          doi: 'https://doi.org/10.xxxx',      // DOI link (optional)
-          pdf: null,                           // PDF link (optional)
-          preprint: null,                      // Preprint link (optional)
-          code: null                           // Code/GitHub link (optional)
-        },
-        {
-          id: 2,
-          year: 2024,
-          type: 'CONFERENCE',
-          title: 'Another Publication Title. Replace with your actual paper title.',
-          authors: 'Thomas, R., & Co-Author, C.',
-          venue: 'Conference on Neural Information Processing Systems (NeurIPS)',
-          volume: null,
-          pages: null,
-          abstract: 'Replace this placeholder abstract with the actual abstract or a short summary of your work presented at this conference.',
-          doi: null,
-          pdf: 'https://example.com/paper.pdf',
-          preprint: 'https://arxiv.org/abs/xxxx.xxxx',
-          code: 'https://github.com/username/repo'
-        },
-        {
-          id: 3,
-          year: 2023,
+          year: 2025,
           type: 'JOURNAL',
-          title: 'Earlier Journal Publication. Replace with your actual paper title.',
-          authors: 'Thomas, R., Co-Author, D., Co-Author, E., & Senior Author, F.',
-          venue: 'NeuroImage',
-          volume: '280',
-          pages: '119–134',
+          title: 'Across the spectrum: Acute alcohol responses in young adults with mild, moderate, and severe alcohol use disorder.',
+          authors: 'Thomas, R., Didier, N., Nordgren, R., Robinson, L., Vena, A., & King, A.C.',
+          venue: 'Drug and Alcohol Dependence',
+          volume: '271',
+          pages: null,
           abstract: null,
-          doi: 'https://doi.org/10.xxxx',
+          doi: 'https://doi.org/10.1016/j.drugalcdep.2025.112629',
           pdf: null,
           preprint: null,
           code: null
         },
         {
-          id: 4,
-          year: 2023,
-          type: 'PREPRINT',
-          title: 'Preprint Title. Replace with your actual preprint title.',
-          authors: 'Thomas, R., & Co-Author, G.',
-          venue: 'bioRxiv',
-          volume: null,
+          id: 2,
+          year: 2024,
+          type: 'JOURNAL',
+          title: 'Combination treatment with varenicline and nicotine patch on smoking cessation outcomes in heavy drinkers at 26-week follow-up.',
+          authors: 'Robinson, L.E., Didier, N., Thomas, R., Vena, A., & King, A.',
+          venue: 'Journal of Clinical Psychopharmacology',
+          volume: '44(4)',
           pages: null,
-          abstract: 'Replace this with a brief description of your preprint. You can also leave the abstract field as null to hide this section.',
-          doi: null,
+          abstract: null,
+          doi: 'https://doi.org/10.1097/JCP.0000000000001864',
           pdf: null,
-          preprint: 'https://biorxiv.org/content/xxxx',
+          preprint: null,
           code: null
         },
         {
-          id: 5,
-          year: 2022,
+          id: 3,
+          year: 2023,
           type: 'JOURNAL',
-          title: 'Earlier Publication Title. Replace with your actual paper title.',
-          authors: 'Thomas, R., Co-Author, H., & Senior Author, I.',
-          venue: 'Cerebral Cortex',
-          volume: '32',
-          pages: '4567–4581',
+          title: 'User experiences of an American-adapted moderated online social media platform for first-episode psychosis: Qualitative analysis.',
+          authors: 'Pokowitz, E., Stiles, B., Thomas, R., Bullard, K., Ludwig, K., Gleeson, J., Perkins, D., & Penn, D.',
+          venue: 'Digital Health',
+          volume: '9',
+          pages: null,
           abstract: null,
-          doi: 'https://doi.org/10.xxxx',
+          doi: 'https://doi.org/10.1177/20552076231176700',
           pdf: null,
           preprint: null,
           code: null
@@ -230,8 +200,8 @@ export default {
 
 .page-title {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 300;
+  font-size: 2rem;
+  font-weight: 390;
   letter-spacing: 0.35em;
   color: var(--fg);
   margin: 0;
@@ -250,14 +220,14 @@ export default {
 
 .filter-btn {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.65rem;
-  font-weight: 300;
+  font-size: 0.8rem;
+  font-weight: 400;
   letter-spacing: 0.2em;
-  color: var(--fg-muted);
+  color: var(--fg);
   background: transparent;
   border: 1px solid var(--entry-border);
   border-radius: 2px;
-  padding: 0.35rem 0.9rem;
+  padding: 0.45rem 1.15rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -285,9 +255,9 @@ export default {
 
 .pub-entry {
   display: grid;
-  grid-template-columns: 80px 1fr;
+  grid-template-columns: 110px 1fr;
   gap: 2rem;
-  padding: 2.5rem 0;
+  padding: 1rem 0 2.5rem;
   border-bottom: 1px solid var(--entry-border);
   animation: entryIn 0.5s ease both;
   animation-delay: calc(var(--i) * 0.07s);
@@ -309,18 +279,18 @@ export default {
 
 .pub-year {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 200;
+  font-size: 1.05rem;
+  font-weight: 300;
   letter-spacing: 0.1em;
   color: var(--fg);
 }
 
 .pub-type {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.55rem;
+  font-size: 0.8rem;
   font-weight: 300;
   letter-spacing: 0.15em;
-  color: var(--fg-faint);
+  color: var(--fg-muted);
   text-transform: uppercase;
   writing-mode: horizontal-tb;
 }
@@ -332,17 +302,17 @@ export default {
 
 .pub-number {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.6rem;
+  font-size: 0.9rem;
   font-weight: 200;
   letter-spacing: 0.15em;
-  color: var(--fg-faint);
+  color: var(--fg-muted);
   margin-bottom: 0.6rem;
 }
 
 .pub-title {
   font-family: 'EB Garamond', Georgia, serif;
-  font-size: 1.25rem;
-  font-weight: 400;
+  font-size: 1.6rem;
+  font-weight: 350;
   line-height: 1.45;
   color: var(--fg);
   margin: 0 0 0.6rem 0;
@@ -350,7 +320,7 @@ export default {
 
 .pub-authors {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.7rem;
+  font-size: 1.2rem;
   font-weight: 300;
   letter-spacing: 0.05em;
   color: var(--fg-muted);
@@ -359,18 +329,21 @@ export default {
 
 .pub-venue {
   font-family: 'EB Garamond', Georgia, serif;
-  font-size: 0.95rem;
+  font-size: 1.3rem;
   color: var(--fg-muted);
   margin: 0 0 0.8rem 0;
+  font-weight: 300;
+  line-height: 1.65;
 }
 
 .pub-abstract {
   font-family: 'EB Garamond', Georgia, serif;
-  font-size: 0.92rem;
+  font-size: 1.3rem;
   line-height: 1.65;
   color: var(--fg-muted);
   margin: 0 0 1rem 0;
   max-width: 680px;
+  font-weight: 300;
 }
 
 /* ── Links ── */
@@ -382,12 +355,12 @@ export default {
 
 .pub-link {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.6rem;
-  font-weight: 300;
+  font-size: 0.85rem;
+  font-weight: 400;
   letter-spacing: 0.18em;
   color: var(--fg);
   text-decoration: none;
-  border: 1px solid var(--entry-border);
+  border: 1px solid var(--fg-muted);
   border-radius: 2px;
   padding: 0.3rem 0.75rem;
   transition: all 0.2s ease;
@@ -398,14 +371,8 @@ export default {
 }
 
 /* ── Transition group ── */
-.fade-slide-enter-active,
 .fade-slide-leave-active {
-  transition: all 0.3s ease;
-}
-.fade-slide-enter-from,
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
+  display: none;
 }
 
 /* ── Responsive ── */
