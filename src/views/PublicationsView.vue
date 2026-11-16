@@ -53,10 +53,10 @@
             <p v-if="pub.abstract" class="pub-abstract">{{ pub.abstract }}</p>
 
             <div class="pub-links">
-              <a v-if="pub.doi" :href="pub.doi" target="_blank" class="pub-link">DOI</a>
-              <a v-if="pub.pdf" :href="pub.pdf" target="_blank" class="pub-link">PDF</a>
-              <a v-if="pub.preprint" :href="pub.preprint" target="_blank" class="pub-link">PREPRINT</a>
-              <a v-if="pub.code" :href="pub.code" target="_blank" class="pub-link">CODE</a>
+              <a v-if="pub.doi" :href="pub.doi" target="_blank" rel="noopener noreferrer" class="pub-link">DOI</a>
+              <a v-if="pub.pdf" :href="pub.pdf" target="_blank" rel="noopener noreferrer" class="pub-link">PDF</a>
+              <a v-if="pub.preprint" :href="pub.preprint" target="_blank" rel="noopener noreferrer" class="pub-link">PREPRINT</a>
+              <a v-if="pub.code" :href="pub.code" target="_blank" rel="noopener noreferrer" class="pub-link">CODE</a>
             </div>
           </div>
         </article>
@@ -394,6 +394,56 @@ export default {
   }
   .filter-bar {
     padding: 1.5rem 1.5rem 0;
+  }
+}
+
+/* ── Phones ── */
+@media (max-width: 640px) {
+  .pub-header {
+    padding: 5.5rem 1.5rem 0;
+    gap: 1rem;
+  }
+  .page-title {
+    font-size: clamp(1rem, 5vw, 1.6rem);
+    letter-spacing: 0.2em;
+  }
+
+  .pub-meta-col {
+    flex-wrap: wrap;
+  }
+
+  .pub-title {
+    font-size: 1.35rem;
+  }
+
+  .pub-authors {
+    font-size: 1.05rem;
+  }
+
+  .pub-venue,
+  .pub-abstract {
+    font-size: 1.1rem;
+  }
+
+  .pub-title,
+  .pub-authors,
+  .pub-venue {
+    overflow-wrap: anywhere;
+  }
+
+  .filter-btn {
+    padding: 0.65rem 1.1rem;
+  }
+
+  .pub-link {
+    padding: 0.55rem 0.95rem;
+  }
+}
+
+/* ── Large screens: title sits higher ── */
+@media (min-width: 1000px) {
+  .pub-header {
+    padding-top: 2.5rem;
   }
 }
 </style>

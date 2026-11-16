@@ -455,4 +455,54 @@ export default {
     padding: 1.5rem 1.5rem 0;
   }
 }
+
+/* ── Phones ── */
+@media (max-width: 640px) {
+  .presentation-header {
+    padding: 5.5rem 1.5rem 0;
+    gap: 1rem;
+  }
+  .page-title {
+    font-size: clamp(1rem, 5vw, 1.6rem);
+    letter-spacing: 0.2em;
+  }
+
+  .presentation-meta-col {
+    flex-wrap: wrap;
+  }
+
+  .presentation-title {
+    font-size: 1.35rem;
+  }
+
+  .presentation-authors {
+    font-size: 1.05rem;
+  }
+
+  .presentation-venue,
+  .presentation-abstract {
+    font-size: 1.1rem;
+  }
+
+  .presentation-title,
+  .presentation-authors,
+  .presentation-venue {
+    overflow-wrap: anywhere;
+  }
+
+  .filter-btn {
+    padding: 0.65rem 1.1rem;
+  }
+
+  .presentation-link {
+    padding: 0.55rem 0.95rem;
+  }
+}
+
+/* ── Large screens: title sits higher ── */
+@media (min-width: 1000px) {
+  .presentation-header {
+    padding-top: 2.5rem;
+  }
+}
 </style>

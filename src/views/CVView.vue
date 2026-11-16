@@ -10,6 +10,11 @@
       <div class="header-rule"></div>
     </header>
 
+    <!-- Small screens only -->
+    <div class="cv-actions">
+      <a :href="pdfUrl" target="_blank" rel="noopener" class="cv-btn">OPEN FULL CV</a>
+    </div>
+
     <!-- Embedded viewer -->
     <main class="cv-viewer">
       <iframe
@@ -120,10 +125,41 @@ export default {
   background: #fff;
 }
 
-/* ── Small screens: buttons only ── */
+/* ── Fallback button (small screens only) ── */
+.cv-actions {
+  display: none;
+  justify-content: center;
+  padding: 0 1.5rem;
+  margin-top: 2rem;
+}
+
+.cv-btn {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: var(--fg);
+  text-decoration: none;
+  padding: 0.85rem 1.8rem;
+  border: 1px solid var(--btn-border);
+  border-radius: 30px;
+  transition: background 0.2s ease;
+}
+.cv-btn:hover {
+  background: var(--btn-hover);
+}
+
 @media (max-width: 900px) {
+  .cv-actions {
+    display: flex;
+  }
   .cv-viewer {
-    display: none;
+    padding: 0 1rem;
+    margin-top: 1.5rem;
+  }
+  .cv-frame {
+    height: 70vh;
+    min-height: 420px;
   }
 }
 
@@ -133,6 +169,29 @@ export default {
   }
   .cv-actions {
     padding: 0 1.5rem;
+  }
+}
+
+/* ── Phones: header clears the menu button ── */
+@media (max-width: 640px) {
+  .cv-header {
+    padding: 5.5rem 1.5rem 0;
+    gap: 1rem;
+  }
+  .page-title {
+    font-size: clamp(1rem, 5vw, 1.6rem);
+    letter-spacing: 0.2em;
+  }
+
+  .cv-btn {
+    padding: 0.85rem 1.5rem;
+  }
+}
+
+/* ── Large screens: title sits higher ── */
+@media (min-width: 1000px) {
+  .cv-header {
+    padding-top: 2.5rem;
   }
 }
 </style>

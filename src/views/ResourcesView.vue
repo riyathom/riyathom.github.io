@@ -25,7 +25,7 @@
           <div class="resources-content-col">
             <h2 class="resources-title">{{ resource.title }}</h2>
             <p v-if="resource.description" class="resources-description">{{ resource.description }}</p>
-            <a v-if="resource.link" :href="resource.link" target="_blank" class="resources-link">{{ resource.link }}</a>
+            <a v-if="resource.link" :href="resource.link" target="_blank" rel="noopener noreferrer" class="resources-link">{{ resource.link }}</a>
           </div>
         </article>
       </transition-group>
@@ -93,7 +93,6 @@ export default {
   padding-bottom: 6rem;
 }
 
-/* Leave room for the fixed side nav */
 @media (min-width: 1000px) {
   .resources-page {
     padding-left: 17rem;
@@ -241,6 +240,40 @@ export default {
   }
   .resources-list {
     padding: 2rem 1.5rem 0;
+  }
+}
+
+/* ── Phones ── */
+@media (max-width: 640px) {
+  .resources-header {
+    padding: 5.5rem 1.5rem 0;
+    gap: 1rem;
+  }
+  .page-title {
+    font-size: clamp(1rem, 5vw, 1.6rem);
+    letter-spacing: 0.2em;
+  }
+
+  .resources-title {
+    font-size: 1.35rem;
+  }
+
+  .resources-description,
+  .resources-link {
+    font-size: 1.1rem;
+  }
+
+  .resources-title,
+  .resources-description,
+  .resources-link {
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ── Large screens: title sits higher ── */
+@media (min-width: 1000px) {
+  .resources-header {
+    padding-top: 2.5rem;
   }
 }
 </style>

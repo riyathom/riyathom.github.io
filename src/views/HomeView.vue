@@ -7,6 +7,7 @@
         <h4 class="banner-text">RIYA THOMAS</h4>
 
         <div id="brain-canvas" class="brain-canvas-container"></div>
+        <p v-if="webglFailed" class="brain-fallback">3D view unavailable on this device</p>
         
         <nav-links />
 
@@ -16,7 +17,7 @@
             round
             class="social-btn"
             href="mailto:riya.thomas@northwestern.edu"
-            target="_blank"
+            target="_blank" rel="noopener noreferrer"
           >
             <img :src="require('@/assets/imgs/email.svg')" alt="Email" style="width: 55px; height: 55px;" />
           </q-btn>
@@ -25,7 +26,7 @@
             round
             class="social-btn"
             href="https://www.linkedin.com/in/riya-thomas-bb3163168/"
-            target="_blank"
+            target="_blank" rel="noopener noreferrer"
           >
             <img :src="require('@/assets/imgs/linkedin.svg')" alt="LinkedIn" style="width: 56px; height: 56px;" />
           </q-btn>
@@ -34,7 +35,7 @@
             round
             class="social-btn"
             href="https://scholar.google.com/citations?user=4Ii8mJwAAAAJ&hl=en"
-            target="_blank"
+            target="_blank" rel="noopener noreferrer"
           >
             <img :src="require('@/assets/imgs/google-scholar.svg')" alt="Google Scholar" style="width: 54px; height: 54px; transform: translateX(-3px);" />
           </q-btn>
@@ -90,6 +91,7 @@ export default {
     return {
       isDragging: false,
       previousMousePosition: { x: 0, y: 0 },
+      webglFailed: false,
     };
   },
   mounted() {
@@ -98,16 +100,15 @@ export default {
     this.renderer = null;
     this.brain = null;
     this.brainMesh = null;
-    
-    this.initThreeJS();
-    this.loadBrainModel();
-    this.animate();
-    this.setupMouseControls();
+
+    this.startScene(0);
     window.addEventListener('resize', this.onWindowResize);
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.onWindowResize);
     this.isUnmounted = true;
+    clearTimeout(this.retryTimer);
+    if (this.resizeObserver) this.resizeObserver.disconnect();
     cancelAnimationFrame(this.animationId);
     if (this.scene) {
       this.scene.traverse((obj) => {
@@ -127,6 +128,32 @@ export default {
     }
   },
   methods: {
+    startScene(attempt) {
+      if (this.isUnmounted) return;
+
+      try {
+        this.initThreeJS();
+      } catch (error) {
+        console.error('Could not start 3D view (attempt ' + (attempt + 1) + '):', error);
+        if (attempt < 3) {
+          this.retryTimer = setTimeout(() => this.startScene(attempt + 1), 600 * (attempt + 1));
+        } else {
+          this.webglFailed = true;
+        }
+        return;
+      }
+
+      const container = document.getElementById('brain-canvas');
+      if (typeof ResizeObserver !== 'undefined') {
+        this.resizeObserver = new ResizeObserver(() => this.onWindowResize());
+        this.resizeObserver.observe(container);
+      }
+
+      this.loadBrainModel();
+      this.animate();
+      this.setupMouseControls();
+    },
+
     initThreeJS() {
       const container = document.getElementById('brain-canvas');
       
@@ -160,7 +187,7 @@ export default {
       this.scene.add(pointLight2);
     },
     
-    loadBrainModel() {
+    loadBrainModel(attempt = 0) {
       this.brain = new THREE.Group();
       
       const loader = new GLTFLoader();
@@ -220,8 +247,12 @@ export default {
         },
         undefined,
         (error) => {
-          console.error('Error loading brain model:', error);
+          console.error('Error loading brain model (attempt ' + (attempt + 1) + '):', error);
           if (this.isUnmounted) return;
+          if (attempt < 2) {
+            this.retryTimer = setTimeout(() => this.loadBrainModel(attempt + 1), 1000 * (attempt + 1));
+            return;
+          }
           this.createProceduralBrain();
         }
       );
@@ -362,7 +393,7 @@ export default {
       });
       
       container.addEventListener('mousemove', (e) => {
-        if (this.isDragging) {
+        if (this.isDragging && this.brain) {
           const deltaX = e.clientX - this.previousMousePosition.x;
           const deltaY = e.clientY - this.previousMousePosition.y;
           
@@ -390,7 +421,7 @@ export default {
       });
       
       container.addEventListener('touchmove', (e) => {
-        if (this.isDragging) {
+        if (this.isDragging && this.brain) {
           const deltaX = e.touches[0].clientX - this.previousMousePosition.x;
           const deltaY = e.touches[0].clientY - this.previousMousePosition.y;
           
@@ -411,6 +442,7 @@ export default {
     
     animate() {
       this.animationId = requestAnimationFrame(this.animate);
+      if (!this.renderer) return;
       
       if (!this.isDragging && this.brain) {
         this.brain.rotation.y += 0.002;
@@ -421,7 +453,7 @@ export default {
     
     onWindowResize() {
       const container = document.getElementById('brain-canvas');
-      if (container && this.camera && this.renderer) {
+      if (container && this.camera && this.renderer && container.clientWidth && container.clientHeight) {
         this.camera.aspect = container.clientWidth / container.clientHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(container.clientWidth, container.clientHeight);
@@ -440,6 +472,7 @@ export default {
   position: relative;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background: white;
 }
@@ -472,6 +505,7 @@ export default {
 
 .banner-container {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -480,7 +514,7 @@ export default {
 }
 
 .banner-text {
-  font-size: 3.2rem;
+  font-size: clamp(1.3rem, 6vw, 3.2rem);
   font-family: Avenir, "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
   letter-spacing: 0.27em;
   word-spacing: 1rem;
@@ -504,6 +538,7 @@ export default {
   border-radius: 50%;
   color: #000;
   transition: all 0.2s ease;
+  z-index: 2;
 }
 
 .social-btn:hover {
@@ -521,6 +556,33 @@ export default {
   height: 700px;
   cursor: grab;
   z-index: 1;
+  touch-action: none;
+}
+
+/* Phones and tablets: scale the brain down */
+@media (max-width: 999px) {
+  .brain-canvas-container {
+    width: min(700px, 92vw, 62vh);
+    height: min(700px, 92vw, 62vh);
+  }
+}
+
+.brain-fallback {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-family: Avenir, "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  color: #777;
+  text-align: center;
+  z-index: 1;
+}
+
+body.dark-mode .brain-fallback {
+  color: #aaa;
 }
 
 .brain-canvas-container:active {
@@ -595,5 +657,44 @@ body.dark-mode .brain-canvas-container canvas {
 
 body.dark-mode .social-btn img {
   filter: invert(1);
+}
+
+/* ── Phones ── */
+@media (max-width: 720px) {
+  .banner-text {
+    font-size: clamp(2rem, 11.5vw, 3rem);
+    line-height: 1.15;
+    text-align: center;
+    max-width: 78vw;
+    margin-bottom: 1rem;
+  }
+
+  .social-links {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 4%;
+    gap: 0.75rem;
+  }
+
+  .social-btn {
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  .social-btn img {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .icon-flip-container {
+    width: 30px;
+    height: 30px;
+  }
+
+  .icon-face svg {
+    width: 30px;
+    height: 30px;
+  }
 }
 </style>
